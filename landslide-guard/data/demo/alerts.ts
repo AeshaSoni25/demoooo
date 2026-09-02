@@ -1,0 +1,145 @@
+import type { Alert } from "@/types";
+
+export const DEMO_ALERTS: Alert[] = [
+  {
+    id: "alert-001",
+    locationId: "loc-002",
+    locationName: "Shimla Foothills",
+    state: "Himachal Pradesh",
+    zone: "HP-042",
+    riskLevel: "CRITICAL",
+    riskScore: 91,
+    trigger: "Extreme rainfall (248mm/24h) + near-saturated soils (94%) + ground displacement (9.2mm/day)",
+    description:
+      "Critical conditions detected in Shimla Foothills. All primary risk indicators exceed safe thresholds simultaneously. Immediate action required.",
+    recommendedAction:
+      "Immediate field verification and local authority notification. Consider precautionary evacuation of zone HP-042. Deploy NDRF standby.",
+    status: "ACTIVE",
+    issuedAt: new Date(Date.now() - 1000 * 60 * 25).toISOString(),
+    affectedPopulation: 170000,
+  },
+  {
+    id: "alert-002",
+    locationId: "loc-011",
+    locationName: "Chamoli District",
+    state: "Uttarakhand",
+    zone: "UK-007",
+    riskLevel: "CRITICAL",
+    riskScore: 88,
+    trigger: "Extreme rainfall (218mm/24h) + soil saturation (95%) + rapid ground movement (8.1mm/day) + high tilt (11.4°)",
+    description:
+      "Multiple sensors in Chamoli District indicate critical pre-failure conditions. Soil saturation has reached near-maximum levels.",
+    recommendedAction:
+      "CRITICAL: Immediate evacuation advisory for vulnerable zones. Deploy NDRF teams. Close NH-7 and secondary roads. Alert ITBP.",
+    status: "ESCALATED",
+    issuedAt: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
+    escalatedTo: "NDRF Team-7, District Collector Chamoli",
+    affectedPopulation: 391000,
+  },
+  {
+    id: "alert-003",
+    locationId: "loc-001",
+    locationName: "Darjeeling Hills",
+    state: "West Bengal",
+    zone: "WB-DRJ-03",
+    riskLevel: "HIGH",
+    riskScore: 78,
+    trigger: "Heavy rainfall (182mm/24h) + high soil moisture (87%) + elevated ground movement",
+    description:
+      "Darjeeling Hills sensors indicate high-risk conditions. Soil moisture has exceeded critical threshold. Ground movement elevated.",
+    recommendedAction:
+      "Activate local warning protocol. Increase monitoring frequency. Notify district administration and SDMA.",
+    status: "ACKNOWLEDGED",
+    issuedAt: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
+    acknowledgedAt: new Date(Date.now() - 1000 * 60 * 90).toISOString(),
+    affectedPopulation: 132000,
+  },
+  {
+    id: "alert-004",
+    locationId: "loc-003",
+    locationName: "Kedarnath Valley",
+    state: "Uttarakhand",
+    zone: "UK-KED-01",
+    riskLevel: "HIGH",
+    riskScore: 74,
+    trigger: "Heavy rainfall + elevated soil moisture + ground movement above threshold",
+    description:
+      "Kedarnath Valley shows high-risk conditions. Given historical susceptibility, immediate precautionary measures are advisable.",
+    recommendedAction:
+      "Increase monitoring frequency. Alert local authorities and restrict movement on vulnerable trails. Pre-position rescue resources.",
+    status: "ACTIVE",
+    issuedAt: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
+    affectedPopulation: 8400,
+  },
+  {
+    id: "alert-005",
+    locationId: "loc-007",
+    locationName: "Uttarkashi District",
+    state: "Uttarakhand",
+    zone: "UK-UTK-02",
+    riskLevel: "HIGH",
+    riskScore: 76,
+    trigger: "Sustained heavy rainfall (158mm/24h) + saturated soils + elevated displacement",
+    description:
+      "Uttarkashi District sensors indicate high-risk conditions. NH-108 may be at risk. Multiple monitoring stations report elevated readings.",
+    recommendedAction:
+      "Issue high-risk advisory. Restrict highway traffic on NH-108. Alert SDRF teams. Prepare evacuation routes.",
+    status: "ACTIVE",
+    issuedAt: new Date(Date.now() - 1000 * 60 * 20).toISOString(),
+    affectedPopulation: 330000,
+  },
+  {
+    id: "alert-006",
+    locationId: "loc-005",
+    locationName: "Wayanad",
+    state: "Kerala",
+    zone: "KL-WYD-04",
+    riskLevel: "HIGH",
+    riskScore: 69,
+    trigger: "Heavy rainfall (168mm/24h) + high soil moisture + plantation area vulnerability",
+    description:
+      "Wayanad District shows elevated risk. Plantation communities on steep slopes are particularly vulnerable.",
+    recommendedAction:
+      "Activate district-level early warning. Alert plantation communities. Monitor river levels. Pre-position rescue equipment.",
+    status: "ACTIVE",
+    issuedAt: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
+    affectedPopulation: 817000,
+  },
+  {
+    id: "alert-007",
+    locationId: "loc-004",
+    locationName: "Sikkim North District",
+    state: "Sikkim",
+    zone: "SK-NTH-01",
+    riskLevel: "MODERATE",
+    riskScore: 54,
+    trigger: "Sustained rainfall + soil moisture near threshold",
+    description:
+      "Sikkim North shows moderate risk. Conditions are being closely monitored. No immediate action required but communities should be alert.",
+    recommendedAction:
+      "Standard monitoring protocols. Issue advisory to communities near river banks.",
+    status: "ACKNOWLEDGED",
+    issuedAt: new Date(Date.now() - 1000 * 60 * 60 * 4).toISOString(),
+    acknowledgedAt: new Date(Date.now() - 1000 * 60 * 60 * 3).toISOString(),
+    affectedPopulation: 43000,
+  },
+  {
+    id: "alert-008",
+    locationId: "loc-012",
+    locationName: "Kalimpong",
+    state: "West Bengal",
+    zone: "WB-KLP-02",
+    riskLevel: "MODERATE",
+    riskScore: 55,
+    trigger: "Sustained rainfall + elevated soil moisture levels",
+    description:
+      "Kalimpong shows moderate risk. NH-717A should be monitored. Local body officials should be on alert.",
+    recommendedAction:
+      "Issue advisory. Monitor NH-717A. Alert local body officials.",
+    status: "RESOLVED",
+    issuedAt: new Date(Date.now() - 1000 * 60 * 60 * 8).toISOString(),
+    acknowledgedAt: new Date(Date.now() - 1000 * 60 * 60 * 7).toISOString(),
+    resolvedAt: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
+    affectedPopulation: 76000,
+  },
+];
