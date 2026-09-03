@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Location {
+  id              String   @id @default(uuid())
+  name            String
+  district        String
+  state           String
+  region          String
+  riskLevel       String   // "LOW", "MODERATE", "HIGH", "SEVERE"
+  riskScore       Int
+  rainfall24h     Float
+  waterLevel      Float
+  soilMoisture    Int
+  aiConfidence    Int
+  lastUpdated     String
+  lat             Float
+  lng             Float
+  population      Int
+  vulnerabilityIndex Float
+  evacuationRoutes Int
+
+  sensors         Sensor[]
+  alerts          Alert[]
+  emergencyResources EmergencyResource[]
+}
+
+model Sensor {
+  id         String   @id @default(uuid())
+  type       String   // "WATER_LEVEL", "RAINFALL", "SOIL_MOISTURE"
+  status     String   // "NORMAL", "WARNING", "CRITICAL", "OFFLINE"
+  value      Float
+  unit       String
+  trend      String   // "UP", "DOWN", "STABLE"
+  lastUpdate String
+  locationId String
+  
+  location   Location @relation(fields: [locationId], references: [id])
+}
+
+model Alert {
+  id          String   @id @default(uuid())
+  title       String
+  severity    String   // "INFO", "WARNING", "CRITICAL"
+  message     String
+  timestamp   String
+  locationId  String
+  
+  location    Location @relation(fields: [locationId], references: [id])
+}
+
+model EmergencyResource {
+  id         String   @id @default(uuid())
+  type       String   // "SHELTER", "HOSPITAL", "SUPPLY_CENTER"
+  name       String
+  capacity   Int
+  current    Int
+  status     String   // "AVAILABLE", "FULL", "STANDBY"
+  distance   Float
+  contact    String
+  locationId String
+  
+  location   Location @relation(fields: [locationId], references: [id])
+}
