@@ -29,46 +29,6 @@ model Location {
   sensors         Sensor[]
   alerts          Alert[]
   emergencyResources EmergencyResource[]
-  liveData        LiveData[]
-  earthquakes     Earthquake[]
-  precipitation   Precipitation[]
-}
-
-model LiveData {
-  id          String   @id @default(uuid())
-  locationId  String
-  temperature Float?
-  humidity    Float?
-  windSpeed   Float?
-  weatherCode Int?
-  source      String   @default("Open-Meteo")
-  timestamp   DateTime @default(now())
-  
-  location    Location @relation(fields: [locationId], references: [id])
-}
-
-model Earthquake {
-  id          String   @id @default(uuid())
-  locationId  String
-  magnitude   Float
-  depth       Float?
-  place       String?
-  time        DateTime
-  source      String   @default("USGS")
-  fetchedAt   DateTime @default(now())
-
-  location    Location @relation(fields: [locationId], references: [id])
-}
-
-model Precipitation {
-  id          String   @id @default(uuid())
-  locationId  String
-  amount      Float
-  source      String   @default("NASA GPM")
-  timestamp   DateTime
-  fetchedAt   DateTime @default(now())
-
-  location    Location @relation(fields: [locationId], references: [id])
 }
 
 model Sensor {

@@ -49,7 +49,7 @@ export default function AlertsPage() {
       setIsLoading(true);
       try {
         const q = region && region !== "All Regions" ? `?region=${encodeURIComponent(region)}` : "";
-        const res = await fetch(`http://localhost:3001/api/alerts${q}`);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/alerts${q}`);
         const data = await res.json();
         setAlerts(data.data || []);
       } catch (e) {

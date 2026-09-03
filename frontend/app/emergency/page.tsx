@@ -39,7 +39,7 @@ export default async function EmergencyPage({
 
   let resources: EmergencyResource[] = [];
   try {
-    const res = await fetch(`http://localhost:3001/api/emergency-resources${query}`, { cache: "no-store" });
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/emergency-resources${query}`, { cache: "no-store" });
     const data = await res.json();
     resources = data.data || [];
   } catch (error) {

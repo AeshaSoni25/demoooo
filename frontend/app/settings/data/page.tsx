@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { AppShell } from "@/components/layout/app-shell";
+import { AppShell } from "@/components/dashboard/app-shell";
 
 export default function DataManagementPage() {
   const [formData, setFormData] = useState({
@@ -37,7 +37,8 @@ export default function DataManagementPage() {
     e.preventDefault();
     setStatus("Submitting...");
     try {
-      const res = await fetch("http://localhost:3001/api/locations", {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+      const res = await fetch(`${API_URL}/api/locations`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...formData, lastUpdated: new Date().toISOString() }),

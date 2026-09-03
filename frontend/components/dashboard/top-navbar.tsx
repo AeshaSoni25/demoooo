@@ -104,34 +104,7 @@ export function TopNavbar({ onMenuClick, title }: TopNavbarProps) {
             </div>
           )}
 
-          {/* Location selector */}
-          <div className="relative hidden sm:block">
-            <button
-              onClick={() => { setShowLocMenu(v => !v); setShowNotifs(false); }}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[12px] font-medium text-slate-400 hover:text-slate-200 transition-colors border"
-              style={{ background:"rgba(255,255,255,0.03)", borderColor:"rgba(255,255,255,0.07)" }}
-              aria-expanded={showLocMenu}
-              aria-haspopup="listbox"
-            >
-              <MapPin className="w-3 h-3 text-indigo-400" />
-              {selectedLocation}
-              <ChevronDown className="w-3 h-3 text-slate-600" />
-            </button>
 
-            {showLocMenu && (
-              <div className="absolute right-0 mt-1.5 w-52 rounded-xl overflow-hidden z-50 glass-strong py-1"
-                role="listbox">
-                {LOCATIONS.map(loc => (
-                  <button key={loc} role="option" aria-selected={loc === selectedLocation}
-                    onClick={() => handleSelectLocation(loc)}
-                    className={cn("w-full text-left px-3 py-2 text-[12px] transition-colors hover:bg-white/[0.06]",
-                      loc === selectedLocation ? "text-indigo-300" : "text-slate-400")}>
-                    {loc}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
 
           {/* Notifications */}
           <div className="relative">

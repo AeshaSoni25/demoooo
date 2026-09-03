@@ -87,7 +87,7 @@ export default function CommunityPage() {
       setIsLoading(true);
       try {
         const q = region && region !== "All Regions" ? `?region=${encodeURIComponent(region)}` : "";
-        const res = await fetch(`http://localhost:3001/api/locations${q}`);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/locations${q}`);
         const data = await res.json();
         const locs = data.data || [];
         setLocations(locs);

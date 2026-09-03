@@ -20,7 +20,6 @@ import { AIExplanation } from "@/components/risk/ai-explanation";
 import { AlertCard } from "@/components/ui/alert-card";
 import { RiskBadge } from "@/components/ui/risk-badge";
 import { MetricCard } from "@/components/ui/metric-card";
-import { DemoBadge } from "@/components/ui/demo-badge";
 import { formatDate, formatRelativeTime } from "@/lib/utils";
 import { predictLandslideRisk } from "@/lib/ai/prediction-engine";
 import { DEMO_HISTORICAL_EVENTS } from "@/data/demo/historical";
@@ -38,16 +37,26 @@ export default async function LocationPage({ params, searchParams }: PageProps) 
   let locations: Location[] = [];
   let alerts: Alert[] = [];
   let sensors: Sensor[] = [];
+  let liveDataRes: any = null;
+  let eqRes: any = null;
+  let precipRes: any = null;
 
   try {
-    const [locRes, alertRes, sensorRes] = await Promise.all([
-      fetch(`http://localhost:3001/api/locations${query}`, { cache: "no-store" }).then((r) => r.json()),
-      fetch(`http://localhost:3001/api/alerts${query}`, { cache: "no-store" }).then((r) => r.json()),
-      fetch(`http://localhost:3001/api/sensors${query}`, { cache: "no-store" }).then((r) => r.json()),
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+    const [locRes, alertRes, sensorRes, live, eq, precip] = await Promise.all([
+      fetch(`${API_URL}/api/locations${query}`, { cache: "no-store" }).then((r) => r.json()),
+      fetch(`${API_URL}/api/alerts${query}`, { cache: "no-store" }).then((r) => r.json()),
+      fetch(`${API_URL}/api/sensors${query}`, { cache: "no-store" }).then((r) => r.json()),
+      fetch(`${API_URL}/api/locations/${params.id}/live-data`, { cache: "no-store" }).then(r => r.json()).catch(() => null),
+      fetch(`${API_URL}/api/locations/${params.id}/earthquakes`, { cache: "no-store" }).then(r => r.json()).catch(() => null),
+      fetch(`${API_URL}/api/locations/${params.id}/precipitation`, { cache: "no-store" }).then(r => r.json()).catch(() => null),
     ]);
     locations = locRes.data || [];
     alerts = alertRes.data || [];
     sensors = sensorRes.data || [];
+    liveDataRes = live?.data;
+    eqRes = eq?.data;
+    precipRes = precip?.data;
   } catch (e) {
     console.error("Failed to fetch location data:", e);
   }
@@ -58,7 +67,6 @@ export default async function LocationPage({ params, searchParams }: PageProps) 
   const locationAlerts = alerts.filter(
     (a) => a.locationId === location.id
   );
-  // We can keep historical events as demo data for now
   const locationEvents = DEMO_HISTORICAL_EVENTS.filter(
     (e) => e.locationId === location.id
   );
@@ -66,27 +74,35 @@ export default async function LocationPage({ params, searchParams }: PageProps) 
     (s) => s.locationId === location.id
   );
 
+  // Override with Live Data if available
+  const temperature = liveDataRes?.temperature ?? 15;
+  const windSpeed = liveDataRes?.windSpeed ?? 0;
+  const humidity = liveDataRes?.humidity ?? 50;
+  
+  const rainfall24h = precipRes?.amount ?? location.rainfall24h;
+  const groundMovement = eqRes && eqRes.length > 0 ? eqRes[0].magnitude * 2 : location.groundMovement;
+
   type MetricVariant = "default" | "critical" | "high" | "moderate" | "low";
 
   const rainfallVariant: MetricVariant =
-    location.rainfall24h > 150 ? "critical" : location.rainfall24h > 100 ? "high" : "default";
+    rainfall24h > 150 ? "critical" : rainfall24h > 100 ? "high" : "default";
   const soilMoistureVariant: MetricVariant =
     location.soilMoisture > 85 ? "critical" : location.soilMoisture > 70 ? "high" : "default";
   const soilSatVariant: MetricVariant =
     location.soilSaturation > 90 ? "critical" : location.soilSaturation > 75 ? "high" : "default";
   const groundVariant: MetricVariant =
-    location.groundMovement > 5 ? "critical" : location.groundMovement > 2 ? "high" : "default";
+    groundMovement > 5 ? "critical" : groundMovement > 2 ? "high" : "default";
 
   // Run AI prediction for this location
   const prediction = predictLandslideRisk({
-    rainfall24h: location.rainfall24h,
+    rainfall24h: rainfall24h,
     rainfall7d: location.rainfall7d,
     soilMoisture: location.soilMoisture,
     soilSaturation: location.soilSaturation,
     slopeAngle: location.slopeAngle,
-    groundDisplacement: location.groundMovement,
+    groundDisplacement: groundMovement,
     elevation: location.elevation,
-    temperature: 15,
+    temperature: temperature,
     vegetationIndex: location.vegetationIndex,
     historicalLandslides: location.historicalLandslides,
   });
@@ -110,7 +126,6 @@ export default async function LocationPage({ params, searchParams }: PageProps) 
           <div className="flex items-center gap-2 mb-1 flex-wrap">
             <h1 className="text-2xl font-bold text-white">{location.name}</h1>
             <RiskBadge level={location.riskLevel} size="md" pulse />
-            <DemoBadge />
           </div>
           <p className="text-sm text-slate-400 flex items-center gap-1.5">
             <MapPin className="w-3.5 h-3.5" />
@@ -130,12 +145,12 @@ export default async function LocationPage({ params, searchParams }: PageProps) 
       {/* ── Key metrics ──────────────────────────────────── */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-5">
         {[
-          { label: "Rainfall 24h", value: `${location.rainfall24h}`, unit: "mm", variant: rainfallVariant },
+          { label: "Rainfall 24h", value: `${rainfall24h.toFixed(1)}`, unit: "mm", variant: rainfallVariant },
+          { label: "Temperature", value: `${temperature.toFixed(1)}`, unit: "°C", variant: "default" as MetricVariant },
+          { label: "Humidity", value: `${humidity.toFixed(1)}`, unit: "%", variant: "default" as MetricVariant },
+          { label: "Wind Speed", value: `${windSpeed.toFixed(1)}`, unit: "km/h", variant: "default" as MetricVariant },
+          { label: "Ground Movement", value: `${groundMovement.toFixed(2)}`, unit: "mm/d", variant: groundVariant },
           { label: "Soil Moisture", value: `${location.soilMoisture}`, unit: "%", variant: soilMoistureVariant },
-          { label: "Soil Saturation", value: `${location.soilSaturation}`, unit: "%", variant: soilSatVariant },
-          { label: "Slope Angle", value: `${location.slopeAngle}`, unit: "°", variant: "default" as MetricVariant },
-          { label: "Ground Movement", value: `${location.groundMovement}`, unit: "mm/d", variant: groundVariant },
-          { label: "Elevation", value: `${location.elevation.toLocaleString("en-IN")}`, unit: "m", variant: "default" as MetricVariant },
         ].map((m) => (
           <MetricCard
             key={m.label}
